@@ -12,7 +12,7 @@ if __name__ == '__main__':
     master_job_id = sys.argv[1]
     experiment_name = sys.argv[2]
     task_id = int(sys.argv[3])
-
+    
     # Get experiment and method
     experiment_registry = ExperimentRegistry()
     experiment = experiment_registry.get_experiment(experiment_name)

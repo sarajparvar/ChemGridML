@@ -87,7 +87,7 @@ def run_experiment(master_job_id: str, experiment: Experiment):
             print(f"Method {task_id} completed successfully")
                 
         except subprocess.CalledProcessError as e:
-            print(f"Method {task_id} failed with exit code {e.returncode}")
+            print(f"Method {task_id} failed with error: {e}")
             # Continue with next method even if one fails
             continue
     

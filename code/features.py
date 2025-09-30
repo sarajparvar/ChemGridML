@@ -48,6 +48,10 @@ def RDKit(mols):
     print(result.shape)
     return result
 
+def get_rdkit_descriptor_names(prefix="RDKIT"):
+    descriptor_names = [desc[0] for desc in Descriptors.descList]
+    return [f"{prefix}_{name}" for name in descriptor_names]
+
 def TOPOTOR(mols, fpSize=env.DEFAULT_FP_SIZE):
     gen = rdFingerprintGenerator.GetTopologicalTorsionGenerator(includeChirality=True, fpSize=fpSize)
     return generate(mols, gen)

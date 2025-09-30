@@ -7,6 +7,7 @@ import numpy as np
 from typing import Dict, Tuple
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing
+import shap
 from experiments import Method
 
 class StudyManager:
@@ -57,7 +58,7 @@ class StudyManager:
         
         return predictions
 
-    def train_and_predict(self, X_train, Y_train, X_test, hyperparams: Dict):
+    def train_and_predict(self, X_train, Y_train, X_test, feature_names, hyperparams: Dict):
         """Train model and make predictions"""
         # Create model instance
         model_class = models.ModelRegistry.get_model(self.method.model)
@@ -68,6 +69,11 @@ class StudyManager:
 
         # Train model
         model.fit(X_train, Y_train)
+        explainer = shap.TreeExplainer(model.model)
+        X = np.concatenate([X_train, X_test], axis=0)
+        shap_values = explainer.shap_values(X)
+        shap.summary_plot(shap_values, X, feature_names=feature_names)
+
         
         return model.predict(X_test)
 
@@ -109,7 +115,7 @@ class StudyManager:
         )
         
         test_predictions = self.train_and_predict(
-            X_train, Y_train, X_test, best_hyperparams
+            X_train, Y_train, X_test, data.feature_names, best_hyperparams
         )
         
         return seed, test_predictions, test_indices
@@ -128,7 +134,7 @@ class StudyManager:
         max_workers = min(allocated_cores, env.N_TESTS)
         if env.DEVICE != 'cpu':
             max_workers = 1
-        max_workers = 2
+        max_workers = 1
         
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
             future_to_seed = {
