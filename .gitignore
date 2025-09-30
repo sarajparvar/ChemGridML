@@ -24,7 +24,7 @@
 *.pt
 *.ckpt
 *.tab
-#*.csv
+*.csv
 *.pyc
 #*.png
 #*.db
