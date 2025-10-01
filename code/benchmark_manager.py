@@ -108,6 +108,7 @@ class BenchmarkManager:
             })
         
         print(f"Computed {len(results['scores'])} metric scores for {dataset_name}")
+        print(results)
         return results
     
     def analyze_all_datasets(self) -> Dict:

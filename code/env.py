@@ -8,7 +8,7 @@ DEVICE = 'cpu' #'cuda' if torch.cuda.is_available() else 'mps' if torch.backends
 print(DEVICE)
 
 # Study parameters
-N_TESTS = 10
+N_TESTS = 3
 N_FOLDS = 5
 N_TRIALS = 15
 

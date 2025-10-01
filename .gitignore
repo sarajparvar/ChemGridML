@@ -19,6 +19,7 @@
 #output/
 #results/
 #studies/
+data/
 .vscode/
 *.pkl
 *.pt

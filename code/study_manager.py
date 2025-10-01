@@ -9,6 +9,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing
 import shap
 from experiments import Method
+import matplotlib.pyplot as plt
 
 class StudyManager:
     def __init__(self, method: Method, studies_path: str = './studies/', predictions_path: str = 'studies/predictions.db'):
@@ -58,7 +59,7 @@ class StudyManager:
         
         return predictions
 
-    def train_and_predict(self, X_train, Y_train, X_test, feature_names, hyperparams: Dict):
+    def train_and_predict(self, X_train, Y_train, X_test, feature_names, seed, hyperparams: Dict):
         """Train model and make predictions"""
         # Create model instance
         model_class = models.ModelRegistry.get_model(self.method.model)
@@ -72,8 +73,10 @@ class StudyManager:
         explainer = shap.TreeExplainer(model.model)
         X = np.concatenate([X_train, X_test], axis=0)
         shap_values = explainer.shap_values(X)
-        shap.summary_plot(shap_values, X, feature_names=feature_names)
-
+        shap.summary_plot(shap_values, X, feature_names=feature_names, show=False)
+        os.makedirs(self.studies_path, exist_ok=True)
+        plt.savefig(f"{self.studies_path}shap_summary_plot_{seed}.png", dpi=300, bbox_inches='tight')
+        plt.close() 
         
         return model.predict(X_test)
 
@@ -115,7 +118,7 @@ class StudyManager:
         )
         
         test_predictions = self.train_and_predict(
-            X_train, Y_train, X_test, data.feature_names, best_hyperparams
+            X_train, Y_train, X_test, data.feature_names, seed, best_hyperparams
         )
         
         return seed, test_predictions, test_indices
